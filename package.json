@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "./main/index.ts",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "start:dev": "nodemon",
