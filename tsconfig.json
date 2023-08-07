@@ -10,7 +10,7 @@
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./dist",
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "./@types/fetch"]
   },
   "exclude": [
     "**/*.spec.ts",

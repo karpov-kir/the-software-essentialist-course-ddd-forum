@@ -1,6 +1,8 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
+import { WebServer } from '../src/WebServer.mjs';
+
 const feature = loadFeature(path.resolve(__dirname, './registration.feature'));
 
 const fakeEmailService = new FakeEmailService();

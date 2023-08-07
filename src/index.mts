@@ -1,5 +1,8 @@
 import { Prisma, PrismaClient, User } from '@prisma/client';
-import express, { Request, Response } from 'express';
+
+import { WebServer } from './WebServer.mjs';
+
+const webServer = new WebServer();
 
 class UserService {
   private prisma: PrismaClient;
@@ -60,17 +63,21 @@ class UserService {
 }
 
 const userService = new UserService();
-const app = express();
 
-app.use(express.json());
-
-app.post('/users', async (req: Request, res: Response) => {
+webServer.addPostRoute<{
+  Body: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}>('/users', async (request, reply) => {
   try {
-    const { firstName, lastName, email } = req.body;
+    const { firstName, lastName, email } = request.body;
 
     // Validate request body
     if (!firstName || !lastName || !email) {
-      return res.status(400).json({ message: 'First name, last name, and email are required' });
+      reply.status(400);
+      return { message: 'First name, last name, and email are required' };
     }
 
     const user = await userService.createUser({
@@ -81,26 +88,37 @@ app.post('/users', async (req: Request, res: Response) => {
       updatedAt: new Date(),
     });
 
-    res.json(user);
+    return user;
   } catch (error) {
     const message = (error as Error).message;
 
     if (message === 'Invalid email address') {
-      return res.status(400).json({ message: 'Invalid email address' });
+      reply.status(400);
+      return { message: 'Invalid email address' };
     }
 
     if (message === 'Email address already exists') {
-      return res.status(400).json({ message: 'Email address already exists' });
+      reply.status(400);
+      return { message: 'Email address already exists' };
     }
 
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    reply.log.error(error);
+    throw new Error('Internal server error');
   }
 });
 
-app.put('/users/:id', async (req, res) => {
-  const { id } = req.params;
-  const { firstName, lastName, email } = req.body;
+webServer.addPutRoute<{
+  Params: {
+    id: string;
+  };
+  Body: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}>('/users/:id', async (request, reply) => {
+  const { id } = request.params;
+  const { firstName, lastName, email } = request.body;
 
   try {
     const user = await userService.updateUser(Number(id), {
@@ -109,44 +127,51 @@ app.put('/users/:id', async (req, res) => {
       email,
       updatedAt: new Date(),
     });
-    res.json(user);
+
+    return user;
   } catch (error) {
     const message = (error as Error).message;
 
     if (message === 'Invalid email address') {
-      return res.status(400).json({ message: 'Invalid email address' });
+      reply.status(400);
+      return { message: 'Invalid email address' };
     }
 
     if (message === 'Email address already exists') {
-      return res.status(400).json({ message: 'Email address already exists' });
+      reply.status(400);
+      return { message: 'Email address already exists' };
     }
 
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    reply.log.error(error);
+    throw new Error('Internal server error');
   }
 });
 
-app.get('/users', async (req: Request, res: Response) => {
+webServer.addGetRoute<{
+  Querystring: {
+    email: string;
+  };
+}>('/users', async (request, reply) => {
   try {
-    const { email } = req.query;
+    const { email } = request.query;
 
     if (!email) {
-      return res.status(400).json({ message: 'Email is required' });
+      reply.status(400);
+      return { message: 'Email is required' };
     }
 
     const user = await userService.getUserByEmail(email.toString());
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      reply.status(404);
+      return { message: 'User not found' };
     }
 
-    res.json(user);
+    return user;
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    reply.log.error(error);
+    throw new Error('Internal server error');
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
-});
+webServer.start();
