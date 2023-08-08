@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.1.1",
-    "fastify": "^4.21.0"
+    "fastify": "^4.21.0",
+    "query-string": "^8.1.0"
   }
 }

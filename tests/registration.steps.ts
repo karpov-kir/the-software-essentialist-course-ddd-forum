@@ -1,13 +1,15 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
+import { ApiClient } from '../src/ApiClient.mjs';
+import { CreateUserDto, GetUserDto } from '../src/userDto.mjs';
 import { WebServer } from '../src/WebServer.mjs';
 
 const feature = loadFeature(path.resolve(__dirname, './registration.feature'));
 
 const fakeEmailService = new FakeEmailService();
 const webServer = new WebServer();
-const httpDriver = new HttpDriver('http://localhost:3000');
+const apiClient = new ApiClient('http://localhost:3000');
 
 defineFeature(feature, (test) => {
   beforeAll(async () => {
@@ -20,21 +22,23 @@ defineFeature(feature, (test) => {
 
   test('Successful registration', ({ given, when, then, and }) => {
     let createUserDto: CreateUserDto;
-    let expectedUser: User;
-    let response: Response;
+    let expectedCreatedUserDto: GetUserDto;
+    let createUserResponse: Response;
 
     given('I am a new user', () => {
-      createUserDto = new UserDtoDirector.createRandom(new UserDtoBuilder());
-      expectedUser = new UserDirector.createFromDto(new UserBuilder(), createUserDto);
+      createUserDto = new CreateUserDtoDirector.createRandom(new CreateUserDtoBuilder());
+      expectedCreatedUserDto = new CreateUserDirector.createFromDto(new CreateUserDtoBuilder(), createUserDto);
     });
 
     when('I register with valid account details', async () => {
-      response = await httpDriver.post('/users/new', createUserDto);
+      createUserResponse = await apiClient.createUser(createUserDto);
     });
 
-    then('I should be granted access to my account', () => {
-      expect(response.status).toBe(200);
-      expect(response.body).toBe(expectedUser);
+    then('I should be granted access to my account', async () => {
+      getUserByEmailResponse = await apiClient.getUsers({ email: createUserDto.email });
+
+      expect(createUserResponse.status).toBe(200);
+      expect(createUserResponse.body).toBe(expectedCreatedUserDto);
     });
 
     and('I should receive an email with login instructions', () => {

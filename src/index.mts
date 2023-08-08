@@ -1,5 +1,6 @@
-import { Prisma, PrismaClient, User } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
+import { CreateUserDto, GetUserDto, UpdateUserDto } from './userDto.mjs';
 import { WebServer } from './WebServer.mjs';
 
 const webServer = new WebServer();
@@ -11,7 +12,7 @@ class UserService {
     this.prisma = new PrismaClient();
   }
 
-  async createUser(user: Prisma.UserCreateInput): Promise<User> {
+  async createUser(user: Prisma.UserCreateInput): Promise<GetUserDto> {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
       throw new Error('Invalid email address');
     }
@@ -32,7 +33,7 @@ class UserService {
     }
   }
 
-  async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<User> {
+  async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<GetUserDto> {
     // Validate email
     if (user.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email as string)) {
       throw new Error('Invalid email address');
@@ -55,8 +56,8 @@ class UserService {
     }
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({
+  async getUsers({ email }: { email?: string } = {}): Promise<GetUserDto[]> {
+    return await this.prisma.user.findMany({
       where: { email },
     });
   }
@@ -65,11 +66,7 @@ class UserService {
 const userService = new UserService();
 
 webServer.addPostRoute<{
-  Body: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+  Body: CreateUserDto;
 }>('/users', async (request, reply) => {
   try {
     const { firstName, lastName, email } = request.body;
@@ -111,11 +108,7 @@ webServer.addPutRoute<{
   Params: {
     id: string;
   };
-  Body: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+  Body: UpdateUserDto;
 }>('/users/:id', async (request, reply) => {
   const { id } = request.params;
   const { firstName, lastName, email } = request.body;
@@ -149,25 +142,11 @@ webServer.addPutRoute<{
 
 webServer.addGetRoute<{
   Querystring: {
-    email: string;
+    email?: string;
   };
 }>('/users', async (request, reply) => {
   try {
-    const { email } = request.query;
-
-    if (!email) {
-      reply.status(400);
-      return { message: 'Email is required' };
-    }
-
-    const user = await userService.getUserByEmail(email.toString());
-
-    if (!user) {
-      reply.status(404);
-      return { message: 'User not found' };
-    }
-
-    return user;
+    return await userService.getUsers();
   } catch (error) {
     reply.log.error(error);
     throw new Error('Internal server error');
