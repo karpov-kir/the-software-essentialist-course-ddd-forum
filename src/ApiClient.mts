@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 
-import { SignUpDto, UpdateUserDto, UserDto } from './UserDto.mjs';
+import { SignedInDto, SignInDto, SignUpDto, UpdateUserDto, UserDto } from './UserDto.mjs';
 
 export type HttpClientResponse<T> = {
   status: number;
@@ -8,7 +8,11 @@ export type HttpClientResponse<T> = {
 };
 
 class HttpClient {
-  public bearerToken?: string;
+  private bearerToken?: string;
+
+  public setBearerToken(bearerToken: string) {
+    this.bearerToken = bearerToken;
+  }
 
   constructor(protected readonly baseUrl: string) {}
 
@@ -70,8 +74,21 @@ class HttpClient {
 }
 
 export class ApiClient extends HttpClient {
+  public async signIn(
+    signInDto: SignInDto,
+    { storeAccessToken }: { storeAccessToken: boolean },
+  ): Promise<HttpClientResponse<SignedInDto>> {
+    const response = await this.post<SignedInDto>('sign-in', { body: signInDto });
+
+    if (storeAccessToken) {
+      this.setBearerToken(response.data.accessToken);
+    }
+
+    return response;
+  }
+
   public signUp(signUpDto: SignUpDto): Promise<HttpClientResponse<UserDto>> {
-    return this.post<UserDto>('users/new', { body: signUpDto });
+    return this.post<UserDto>('sign-up', { body: signUpDto });
   }
 
   public updateUser(id: string, updateUserDto: UpdateUserDto): Promise<HttpClientResponse<UserDto>> {

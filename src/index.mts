@@ -1,7 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
 import { toUserDto, User } from './User.mjs';
-import { SignUpDto, UpdateUserDto, UserDto } from './UserDto.mjs';
+import { SignedInDto, SignInDto, SignUpDto, UpdateUserDto, UserDto } from './UserDto.mjs';
+import { AccessTokenUtils } from './utils/AccessTokenUtils.mjs';
 import { PasswordUtils } from './utils/PasswordUtils.mjs';
 import { WebServer } from './WebServer.mjs';
 
@@ -40,6 +41,33 @@ class UserService {
 
       throw new Error('Internal server error');
     }
+  }
+
+  async signIn(signInDto: SignInDto): Promise<{
+    user: User;
+    accessToken: string;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: signInDto.email },
+    });
+
+    if (!user) {
+      throw new Error('Invalid email address or password');
+    }
+
+    if (
+      !(await PasswordUtils.comparePassword({
+        plainPassword: signInDto.password,
+        hashedPassword: user.password,
+      }))
+    ) {
+      throw new Error('Invalid email address or password');
+    }
+
+    return {
+      user,
+      accessToken: await AccessTokenUtils.createAccessToken(),
+    };
   }
 
   async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<User> {
@@ -100,6 +128,30 @@ webServer.addPostRoute<{
       return { message: 'Email address already exists' };
     }
 
+    reply.log.error(error);
+    throw new Error('Internal server error');
+  }
+});
+
+webServer.addPostRoute<{
+  Body: SignInDto;
+}>('/sign-in', async (request, reply): Promise<SignedInDto | ApiError> => {
+  try {
+    const { email, password } = request.body;
+
+    // Validate request body
+    if (!email || !password) {
+      reply.status(400);
+      return { message: 'Email and password are required' };
+    }
+
+    const { accessToken, user } = await userService.signIn({ email, password });
+
+    return {
+      user: toUserDto(user),
+      accessToken,
+    };
+  } catch (error) {
     reply.log.error(error);
     throw new Error('Internal server error');
   }

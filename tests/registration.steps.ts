@@ -35,9 +35,7 @@ defineFeature(feature, (test) => {
     });
 
     then('I should be granted access to my account', async () => {
-      const {
-        data: { token },
-      } = await apiClient.signIn(UserObjectMother.toSignInDto(newUser));
+      await apiClient.signIn(UserObjectMother.toSignInDto({ user: newUser }), { storeAccessToken: true });
       const profileResponse = await apiClient.getProfile();
 
       expect(profileResponse.status).toBe(200);

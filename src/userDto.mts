@@ -14,6 +14,16 @@ export interface SignUpDto {
   password: string;
 }
 
+export interface SignInDto {
+  email: string;
+  password: string;
+}
+
+export interface SignedInDto {
+  user: UserDto;
+  accessToken: string;
+}
+
 export interface UpdateUserDto {
   email: string;
   firstName: string;
