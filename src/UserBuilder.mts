@@ -1,17 +1,22 @@
 import { User } from '@prisma/client';
 
+import { PasswordUtils } from './utils/PasswordUtils.mjs';
+
 export class UserBuilder {
-  private static DEFAULT_FIRST_NAME = 'John';
-  private static DEFAULT_LAST_NAME = 'Doe';
-  private static DEFAULT_EMAIL = 'john.doe@fake-email.com';
-  private static DEFAULT_CREATED_AT = new Date('2023-08-28 14:00:00');
-  private static DEFAULT_UPDATED_AT = new Date('2023-08-28 18:00:00');
+  public static readonly DEFAULT_FIRST_NAME = 'John';
+  public static readonly DEFAULT_LAST_NAME = 'Doe';
+  public static readonly DEFAULT_EMAIL = 'john.doe@fake-email.com';
+  public static readonly DEFAULT_CREATED_AT = new Date('2023-08-28 14:00:00');
+  public static readonly DEFAULT_UPDATED_AT = new Date('2023-08-28 18:00:00');
+  public static readonly DEFAULT_PASSWORD = 'Test';
+  public static readonly DEFAULT_HASHED_PASSWORD = PasswordUtils.hashPasswordSync(this.DEFAULT_PASSWORD);
 
   private static lastId = 1;
 
   private firstName = UserBuilder.DEFAULT_FIRST_NAME;
   private lastName = UserBuilder.DEFAULT_LAST_NAME;
   private email = UserBuilder.DEFAULT_EMAIL;
+  private password = UserBuilder.DEFAULT_HASHED_PASSWORD;
   private createdAt = UserBuilder.DEFAULT_CREATED_AT;
   private updatedAt = UserBuilder.DEFAULT_UPDATED_AT;
 
@@ -40,6 +45,7 @@ export class UserBuilder {
       email: this.email,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      password: this.password,
     };
   }
 }

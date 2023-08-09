@@ -8,6 +8,7 @@ import {
   type FormData as UndiciFormDataType,
   type Headers as UndiciHeadersType,
   type Request as UndiciRequestType,
+  type RequestInit as UndiciRequestInitType,
   type Response as UndiciResponseType,
 } from 'undici';
 
@@ -23,4 +24,5 @@ declare global {
   type Headers = UndiciHeadersType;
   type Request = UndiciRequestType;
   type Response = UndiciResponseType;
+  type RequestInit = UndiciRequestInitType;
 }

@@ -1,7 +1,13 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
-import { CreateUserDto, GetUserDto, UpdateUserDto } from './userDto.mjs';
+import { toUserDto, User } from './User.mjs';
+import { SignUpDto, UpdateUserDto, UserDto } from './UserDto.mjs';
+import { PasswordUtils } from './utils/PasswordUtils.mjs';
 import { WebServer } from './WebServer.mjs';
+
+interface ApiError {
+  message: string;
+}
 
 const webServer = new WebServer();
 
@@ -12,14 +18,17 @@ class UserService {
     this.prisma = new PrismaClient();
   }
 
-  async createUser(user: Prisma.UserCreateInput): Promise<GetUserDto> {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+  async signUp(signUpDto: SignUpDto): Promise<User> {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpDto.email)) {
       throw new Error('Invalid email address');
     }
 
     try {
       return await this.prisma.user.create({
-        data: user,
+        data: {
+          ...signUpDto,
+          password: await PasswordUtils.hashPassword(signUpDto.password),
+        },
       });
     } catch (error) {
       const prismaError = error as Prisma.PrismaClientKnownRequestError;
@@ -33,7 +42,7 @@ class UserService {
     }
   }
 
-  async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<GetUserDto> {
+  async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<User> {
     // Validate email
     if (user.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email as string)) {
       throw new Error('Invalid email address');
@@ -56,8 +65,8 @@ class UserService {
     }
   }
 
-  async getUsers({ email }: { email?: string } = {}): Promise<GetUserDto[]> {
-    return await this.prisma.user.findMany({
+  async getUsers({ email }: { email?: string } = {}): Promise<User[]> {
+    return this.prisma.user.findMany({
       where: { email },
     });
   }
@@ -66,26 +75,18 @@ class UserService {
 const userService = new UserService();
 
 webServer.addPostRoute<{
-  Body: CreateUserDto;
-}>('/users', async (request, reply) => {
+  Body: SignUpDto;
+}>('/sign-up', async (request, reply): Promise<UserDto | ApiError> => {
   try {
-    const { firstName, lastName, email } = request.body;
+    const { firstName, lastName, email, password } = request.body;
 
     // Validate request body
-    if (!firstName || !lastName || !email) {
+    if (!firstName || !lastName || !email || !password) {
       reply.status(400);
-      return { message: 'First name, last name, and email are required' };
+      return { message: 'First name, last name, email, and password are required' };
     }
 
-    const user = await userService.createUser({
-      firstName,
-      lastName,
-      email,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    return user;
+    return toUserDto(await userService.signUp(request.body));
   } catch (error) {
     const message = (error as Error).message;
 
@@ -109,19 +110,19 @@ webServer.addPutRoute<{
     id: string;
   };
   Body: UpdateUserDto;
-}>('/users/:id', async (request, reply) => {
+}>('/users/:id', async (request, reply): Promise<UserDto | ApiError> => {
   const { id } = request.params;
   const { firstName, lastName, email } = request.body;
 
   try {
-    const user = await userService.updateUser(Number(id), {
-      firstName,
-      lastName,
-      email,
-      updatedAt: new Date(),
-    });
-
-    return user;
+    return toUserDto(
+      await userService.updateUser(Number(id), {
+        firstName,
+        lastName,
+        email,
+        updatedAt: new Date(),
+      }),
+    );
   } catch (error) {
     const message = (error as Error).message;
 
@@ -144,9 +145,9 @@ webServer.addGetRoute<{
   Querystring: {
     email?: string;
   };
-}>('/users', async (request, reply) => {
+}>('/users', async (request, reply): Promise<UserDto[]> => {
   try {
-    return await userService.getUsers();
+    return (await userService.getUsers()).map(toUserDto);
   } catch (error) {
     reply.log.error(error);
     throw new Error('Internal server error');

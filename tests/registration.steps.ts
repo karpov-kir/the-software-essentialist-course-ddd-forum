@@ -23,7 +23,6 @@ defineFeature(feature, (test) => {
   });
 
   test('Successful registration', ({ given, when, then, and }) => {
-    const newUserPassword = 'Test';
     let newUser: User;
     let signUpResponse: HttpClientResponse<UserDto>;
 
@@ -32,9 +31,7 @@ defineFeature(feature, (test) => {
     });
 
     when('I register with valid account details', async () => {
-      signUpResponse = await apiClient.signUp(
-        UserObjectMother.toSignUpDto({ user: newUser, password: newUserPassword }),
-      );
+      signUpResponse = await apiClient.signUp(UserObjectMother.toSignUpDto({ user: newUser }));
     });
 
     then('I should be granted access to my account', async () => {

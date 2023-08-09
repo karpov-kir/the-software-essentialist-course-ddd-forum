@@ -1,29 +1,25 @@
 import { User } from '@prisma/client';
 
 import { UserBuilder } from './UserBuilder.mjs';
-import { CreateUserDto, GetUserDto } from './userDto.mjs';
+import { SignUpDto } from './UserDto.mjs';
 
 export class UserObjectMother {
   public static defaultUser(): User {
     return new UserBuilder().build();
   }
 
-  public static toCreateUserDto(user: User): CreateUserDto {
+  public static toSignUpDto({
+    user,
+    password = UserBuilder.DEFAULT_PASSWORD,
+  }: {
+    user: User;
+    password?: string;
+  }): SignUpDto {
     return {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-    };
-  }
-
-  public static toGetUserDto(user: User): GetUserDto {
-    return {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      password,
     };
   }
 }
