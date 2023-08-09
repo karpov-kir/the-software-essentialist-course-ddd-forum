@@ -1,8 +1,9 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
-import { ApiClient } from '../src/ApiClient.mjs';
+import { ApiClient, HttpClientResponse } from '../src/ApiClient.mjs';
 import { CreateUserDto, GetUserDto } from '../src/userDto.mjs';
+import { UserObjectMother } from '../src/UserObjectMother.mjs';
 import { WebServer } from '../src/WebServer.mjs';
 
 const feature = loadFeature(path.resolve(__dirname, './registration.feature'));
@@ -23,11 +24,13 @@ defineFeature(feature, (test) => {
   test('Successful registration', ({ given, when, then, and }) => {
     let createUserDto: CreateUserDto;
     let expectedCreatedUserDto: GetUserDto;
-    let createUserResponse: Response;
+    let createUserResponse: HttpClientResponse<GetUserDto>;
 
     given('I am a new user', () => {
-      createUserDto = new CreateUserDtoDirector.createRandom(new CreateUserDtoBuilder());
-      expectedCreatedUserDto = new CreateUserDirector.createFromDto(new CreateUserDtoBuilder(), createUserDto);
+      const user = UserObjectMother.defaultUser();
+
+      createUserDto = UserObjectMother.toCreateUserDto(user);
+      expectedCreatedUserDto = UserObjectMother.toGetUserDto(user);
     });
 
     when('I register with valid account details', async () => {
@@ -35,10 +38,8 @@ defineFeature(feature, (test) => {
     });
 
     then('I should be granted access to my account', async () => {
-      getUserByEmailResponse = await apiClient.getUsers({ email: createUserDto.email });
-
       expect(createUserResponse.status).toBe(200);
-      expect(createUserResponse.body).toBe(expectedCreatedUserDto);
+      expect(createUserResponse.data).toBe(expectedCreatedUserDto);
     });
 
     and('I should receive an email with login instructions', () => {
