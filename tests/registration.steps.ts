@@ -2,7 +2,8 @@ import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
 import { ApiClient, HttpClientResponse } from '../src/ApiClient.mjs';
-import { CreateUserDto, GetUserDto } from '../src/userDto.mjs';
+import { toUserDto, User } from '../src/User.mjs';
+import { UserDto } from '../src/UserDto.mjs';
 import { UserObjectMother } from '../src/UserObjectMother.mjs';
 import { WebServer } from '../src/WebServer.mjs';
 
@@ -22,24 +23,30 @@ defineFeature(feature, (test) => {
   });
 
   test('Successful registration', ({ given, when, then, and }) => {
-    let createUserDto: CreateUserDto;
-    let expectedCreatedUserDto: GetUserDto;
-    let createUserResponse: HttpClientResponse<GetUserDto>;
+    const newUserPassword = 'Test';
+    let newUser: User;
+    let signUpResponse: HttpClientResponse<UserDto>;
 
     given('I am a new user', () => {
-      const user = UserObjectMother.defaultUser();
-
-      createUserDto = UserObjectMother.toCreateUserDto(user);
-      expectedCreatedUserDto = UserObjectMother.toGetUserDto(user);
+      newUser = UserObjectMother.defaultUser();
     });
 
     when('I register with valid account details', async () => {
-      createUserResponse = await apiClient.createUser(createUserDto);
+      signUpResponse = await apiClient.signUp(
+        UserObjectMother.toSignUpDto({ user: newUser, password: newUserPassword }),
+      );
     });
 
     then('I should be granted access to my account', async () => {
-      expect(createUserResponse.status).toBe(200);
-      expect(createUserResponse.data).toBe(expectedCreatedUserDto);
+      const {
+        data: { token },
+      } = await apiClient.signIn(UserObjectMother.toSignInDto(newUser));
+      const profileResponse = await apiClient.getProfile();
+
+      expect(profileResponse.status).toBe(200);
+      expect(profileResponse.data).toEqual(toUserDto(newUser));
+      expect(signUpResponse.status).toBe(200);
+      expect(signUpResponse.data).toBe(toUserDto(newUser));
     });
 
     and('I should receive an email with login instructions', () => {
