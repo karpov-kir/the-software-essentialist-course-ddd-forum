@@ -39,7 +39,7 @@ class UserService {
         throw new Error('Email address already exists');
       }
 
-      throw new Error('Internal server error');
+      throw error;
     }
   }
 
@@ -66,7 +66,7 @@ class UserService {
 
     return {
       user,
-      accessToken: await AccessTokenUtils.createAccessToken(),
+      accessToken: await AccessTokenUtils.createAccessToken({ email: user.email }),
     };
   }
 
@@ -89,12 +89,16 @@ class UserService {
         throw new Error('Email address already exists');
       }
 
-      throw new Error('Internal server error');
+      throw error;
     }
   }
 
-  async getUsers({ email }: { email?: string } = {}): Promise<User[]> {
-    return this.prisma.user.findMany({
+  getUsers(): Promise<User[]> {
+    return this.prisma.user.findMany();
+  }
+
+  getUserByEmail(email: string): Promise<User> {
+    return this.prisma.user.findFirstOrThrow({
       where: { email },
     });
   }
@@ -102,108 +106,138 @@ class UserService {
 
 const userService = new UserService();
 
-webServer.addPostRoute<{
+webServer.addRoute<{
   Body: SignUpDto;
-}>('/sign-up', async (request, reply): Promise<UserDto | ApiError> => {
-  try {
-    const { firstName, lastName, email, password } = request.body;
+}>({
+  path: '/sign-up',
+  method: 'POST',
+  isProtected: false,
+  handler: async (request, reply): Promise<UserDto | ApiError> => {
+    try {
+      const { firstName, lastName, email, password } = request.body;
 
-    // Validate request body
-    if (!firstName || !lastName || !email || !password) {
-      reply.status(400);
-      return { message: 'First name, last name, email, and password are required' };
+      // Validate request body
+      if (!firstName || !lastName || !email || !password) {
+        reply.status(400);
+        return { message: 'First name, last name, email, and password are required' };
+      }
+
+      return toUserDto(await userService.signUp(request.body));
+    } catch (error) {
+      const message = (error as Error).message;
+
+      if (message === 'Invalid email address') {
+        reply.status(400);
+        return { message: 'Invalid email address' };
+      }
+
+      if (message === 'Email address already exists') {
+        reply.status(400);
+        return { message: 'Email address already exists' };
+      }
+
+      reply.log.error(error);
+      throw new Error('Internal server error');
     }
-
-    return toUserDto(await userService.signUp(request.body));
-  } catch (error) {
-    const message = (error as Error).message;
-
-    if (message === 'Invalid email address') {
-      reply.status(400);
-      return { message: 'Invalid email address' };
-    }
-
-    if (message === 'Email address already exists') {
-      reply.status(400);
-      return { message: 'Email address already exists' };
-    }
-
-    reply.log.error(error);
-    throw new Error('Internal server error');
-  }
+  },
 });
 
-webServer.addPostRoute<{
+webServer.addRoute<{
   Body: SignInDto;
-}>('/sign-in', async (request, reply): Promise<SignedInDto | ApiError> => {
-  try {
-    const { email, password } = request.body;
+}>({
+  path: '/sign-in',
+  method: 'POST',
+  isProtected: false,
+  handler: async (request, reply): Promise<SignedInDto | ApiError> => {
+    try {
+      const { email, password } = request.body;
 
-    // Validate request body
-    if (!email || !password) {
-      reply.status(400);
-      return { message: 'Email and password are required' };
+      // Validate request body
+      if (!email || !password) {
+        reply.status(400);
+        return { message: 'Email and password are required' };
+      }
+
+      const { accessToken, user } = await userService.signIn({ email, password });
+
+      return {
+        user: toUserDto(user),
+        accessToken,
+      };
+    } catch (error) {
+      reply.log.error(error);
+      throw new Error('Internal server error');
     }
-
-    const { accessToken, user } = await userService.signIn({ email, password });
-
-    return {
-      user: toUserDto(user),
-      accessToken,
-    };
-  } catch (error) {
-    reply.log.error(error);
-    throw new Error('Internal server error');
-  }
+  },
 });
 
-webServer.addPutRoute<{
+webServer.addRoute<{
   Params: {
     id: string;
   };
   Body: UpdateUserDto;
-}>('/users/:id', async (request, reply): Promise<UserDto | ApiError> => {
-  const { id } = request.params;
-  const { firstName, lastName, email } = request.body;
+}>({
+  path: '/users/:id',
+  method: 'PUT',
+  isProtected: true,
+  handler: async (request, reply): Promise<UserDto | ApiError> => {
+    const { id } = request.params;
+    const { firstName, lastName, email } = request.body;
 
-  try {
-    return toUserDto(
-      await userService.updateUser(Number(id), {
-        firstName,
-        lastName,
-        email,
-        updatedAt: new Date(),
-      }),
-    );
-  } catch (error) {
-    const message = (error as Error).message;
+    try {
+      return toUserDto(
+        await userService.updateUser(Number(id), {
+          firstName,
+          lastName,
+          email,
+          updatedAt: new Date(),
+        }),
+      );
+    } catch (error) {
+      const message = (error as Error).message;
 
-    if (message === 'Invalid email address') {
-      reply.status(400);
-      return { message: 'Invalid email address' };
+      if (message === 'Invalid email address') {
+        reply.status(400);
+        return { message: 'Invalid email address' };
+      }
+
+      if (message === 'Email address already exists') {
+        reply.status(400);
+        return { message: 'Email address already exists' };
+      }
+
+      reply.log.error(error);
+      throw new Error('Internal server error');
     }
-
-    if (message === 'Email address already exists') {
-      reply.status(400);
-      return { message: 'Email address already exists' };
-    }
-
-    reply.log.error(error);
-    throw new Error('Internal server error');
-  }
+  },
 });
 
-webServer.addGetRoute<{
-  Querystring: {
-    email?: string;
-  };
-}>('/users', async (request, reply): Promise<UserDto[]> => {
-  try {
-    return (await userService.getUsers()).map(toUserDto);
-  } catch (error) {
-    reply.log.error(error);
-    throw new Error('Internal server error');
-  }
+webServer.addRoute({
+  path: '/users',
+  method: 'GET',
+  isProtected: true,
+  handler: async (request, reply): Promise<UserDto[]> => {
+    try {
+      return (await userService.getUsers()).map(toUserDto);
+    } catch (error) {
+      reply.log.error(error);
+      throw new Error('Internal server error');
+    }
+  },
+});
+
+webServer.addRoute({
+  path: '/profile',
+  method: 'GET',
+  isProtected: true,
+  handler: async (request, reply): Promise<UserDto> => {
+    try {
+      return toUserDto(await userService.getUserByEmail(request.userEmail));
+    } catch (error) {
+      reply.log.error(error);
+      throw new Error('Internal server error');
+    }
+  },
 });
 
 webServer.start();

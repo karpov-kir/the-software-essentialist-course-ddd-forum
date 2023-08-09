@@ -36,12 +36,13 @@ defineFeature(feature, (test) => {
 
     then('I should be granted access to my account', async () => {
       await apiClient.signIn(UserObjectMother.toSignInDto({ user: newUser }), { storeAccessToken: true });
+
       const profileResponse = await apiClient.getProfile();
 
-      expect(profileResponse.status).toBe(200);
-      expect(profileResponse.data).toEqual(toUserDto(newUser));
       expect(signUpResponse.status).toBe(200);
       expect(signUpResponse.data).toBe(toUserDto(newUser));
+      expect(profileResponse.status).toBe(200);
+      expect(profileResponse.data).toEqual(toUserDto(newUser));
     });
 
     and('I should receive an email with login instructions', () => {

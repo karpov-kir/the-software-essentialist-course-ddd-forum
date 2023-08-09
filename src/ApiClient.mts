@@ -8,10 +8,10 @@ export type HttpClientResponse<T> = {
 };
 
 class HttpClient {
-  private bearerToken?: string;
+  private accessToken?: string;
 
-  public setBearerToken(bearerToken: string) {
-    this.bearerToken = bearerToken;
+  public setAccessToken(accessToken: string) {
+    this.accessToken = accessToken;
   }
 
   constructor(protected readonly baseUrl: string) {}
@@ -19,8 +19,8 @@ class HttpClient {
   private createHeaders() {
     const headers: RequestInit['headers'] = {};
 
-    if (this.bearerToken) {
-      headers['Authorization'] = `Bearer ${this.bearerToken}`;
+    if (this.accessToken) {
+      headers['Authorization'] = `Bearer ${this.accessToken}`;
     }
 
     return headers;
@@ -81,7 +81,7 @@ export class ApiClient extends HttpClient {
     const response = await this.post<SignedInDto>('sign-in', { body: signInDto });
 
     if (storeAccessToken) {
-      this.setBearerToken(response.data.accessToken);
+      this.setAccessToken(response.data.accessToken);
     }
 
     return response;
@@ -97,5 +97,9 @@ export class ApiClient extends HttpClient {
 
   public getUsers(): Promise<HttpClientResponse<UserDto[]>> {
     return this.get<UserDto[]>('users');
+  }
+
+  public getProfile(): Promise<HttpClientResponse<UserDto>> {
+    return this.get<UserDto>('user');
   }
 }

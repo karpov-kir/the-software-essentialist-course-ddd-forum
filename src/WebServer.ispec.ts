@@ -6,8 +6,13 @@ describe(WebServer, () => {
   beforeEach(() => {
     webServer = new WebServer();
 
-    webServer.addGetRoute('/', () => {
-      return 'OK';
+    webServer.addRoute({
+      method: 'GET',
+      path: '/',
+      isProtected: false,
+      handler: () => {
+        return 'OK';
+      },
     });
   });
 

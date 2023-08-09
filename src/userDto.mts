@@ -30,3 +30,7 @@ export interface UpdateUserDto {
   lastName: string;
   password: string;
 }
+
+export interface AccessTokenPayloadDto {
+  email: string;
+}
