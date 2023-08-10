@@ -1,11 +1,12 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
-import { ApiClient, HttpClientResponse } from '../src/ApiClient.mjs';
-import { toUserDto, User } from '../src/User.mjs';
-import { UserDto } from '../src/UserDto.mjs';
-import { UserObjectMother } from '../src/UserObjectMother.mjs';
-import { WebServer } from '../src/WebServer.mjs';
+import { WebServer } from '../src/infra/WebServer.mjs';
+import { UserDto } from '../src/shared/dto/UserDto.mjs';
+import { ApiClient } from '../src/shared/http/ApiClient.mjs';
+import { HttpDriverResponse } from '../src/shared/http/HttpDriver.mjs';
+import { toUserDto, User } from '../src/shared/models/User.mjs';
+import { UserObjectMother } from './UserObjectMother.mjs';
 
 const feature = loadFeature(path.resolve(__dirname, './registration.feature'));
 
@@ -24,7 +25,7 @@ defineFeature(feature, (test) => {
 
   test('Successful registration', ({ given, when, then, and }) => {
     let newUser: User;
-    let signUpResponse: HttpClientResponse<UserDto>;
+    let signUpResponse: HttpDriverResponse<UserDto>;
 
     given('I am a new user', () => {
       newUser = UserObjectMother.defaultUser();
@@ -35,7 +36,9 @@ defineFeature(feature, (test) => {
     });
 
     then('I should be granted access to my account', async () => {
-      await apiClient.signIn(UserObjectMother.toSignInDto({ user: newUser }), { storeAccessToken: true });
+      await apiClient.signIn(UserObjectMother.toSignInDto({ user: newUser }), {
+        useAccessTokenForFutureRequests: true,
+      });
 
       const profileResponse = await apiClient.getProfile();
 

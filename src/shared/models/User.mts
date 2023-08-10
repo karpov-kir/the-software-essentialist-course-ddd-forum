@@ -1,4 +1,4 @@
-import { UserDto } from './UserDto.mjs';
+import { UserDto } from '../dto/UserDto.mjs';
 
 export interface User {
   id: number;

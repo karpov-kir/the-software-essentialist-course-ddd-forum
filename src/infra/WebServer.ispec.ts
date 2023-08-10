@@ -1,19 +1,11 @@
+import { CompositionRoot } from '../CompositionRoot.mjs';
 import { WebServer } from './WebServer.mjs';
 
 let webServer: WebServer;
 
 describe(WebServer, () => {
   beforeEach(() => {
-    webServer = new WebServer();
-
-    webServer.addRoute({
-      method: 'GET',
-      path: '/',
-      isProtected: false,
-      handler: () => {
-        return 'OK';
-      },
-    });
+    webServer = new CompositionRoot().getWebServer();
   });
 
   afterEach(async () => {

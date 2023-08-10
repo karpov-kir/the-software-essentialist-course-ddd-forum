@@ -7,13 +7,6 @@ export interface UserDto {
   updatedAt: Date;
 }
 
-export interface SignUpDto {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-}
-
 export interface SignInDto {
   email: string;
   password: string;
@@ -22,6 +15,20 @@ export interface SignInDto {
 export interface SignedInDto {
   user: UserDto;
   accessToken: string;
+}
+
+export interface CreateUserDto {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+export interface SignUpDto {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
 }
 
 export interface UpdateUserDto {

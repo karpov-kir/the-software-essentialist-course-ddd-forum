@@ -8,7 +8,6 @@
     "lib": ["ES2022"],
     "esModuleInterop": true,
     "baseUrl": "./",
-    "rootDir": "./src",
     "outDir": "./dist",
     "types": ["node", "jest", "./@types/fetch"]
   },
@@ -17,6 +16,7 @@
     "**/*.ispec.ts",
     "**/*.steps.ts",
     "**/*.e2e.ts",
-    "**/jest.config.ts"
+    "**/jest.config.ts",
+    "./tests"
   ]
 }

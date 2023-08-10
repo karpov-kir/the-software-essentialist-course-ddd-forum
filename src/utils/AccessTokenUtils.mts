@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { AccessTokenPayloadDto } from 'src/UserDto.mjs';
+
+import { AccessTokenPayloadDto } from '../shared/dto/UserDto.mjs';
 
 const SECRET = 'shhhhh';
 

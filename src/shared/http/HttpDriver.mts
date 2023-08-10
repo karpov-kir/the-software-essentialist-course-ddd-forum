@@ -1,13 +1,11 @@
 import queryString from 'query-string';
 
-import { SignedInDto, SignInDto, SignUpDto, UpdateUserDto, UserDto } from './UserDto.mjs';
-
-export type HttpClientResponse<T> = {
+export type HttpDriverResponse<T> = {
   status: number;
   data: T;
 };
 
-class HttpClient {
+export class HttpDriver {
   private accessToken?: string;
 
   public setAccessToken(accessToken: string) {
@@ -29,7 +27,7 @@ class HttpClient {
   protected async get<T>(
     path: string,
     { queryParams }: { queryParams?: Record<string, string | undefined> } = {},
-  ): Promise<HttpClientResponse<T>> {
+  ): Promise<HttpDriverResponse<T>> {
     const url = new URL(`${this.baseUrl}/${path}`);
 
     if (queryParams) {
@@ -46,7 +44,7 @@ class HttpClient {
     };
   }
 
-  protected async post<T>(url: string, { body }: { body?: object } = {}): Promise<HttpClientResponse<T>> {
+  protected async post<T>(url: string, { body }: { body?: object } = {}): Promise<HttpDriverResponse<T>> {
     const response = await fetch(url, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
@@ -59,7 +57,7 @@ class HttpClient {
     };
   }
 
-  protected async put<T>(url: string, { body }: { body?: object } = {}): Promise<HttpClientResponse<T>> {
+  protected async put<T>(url: string, { body }: { body?: object } = {}): Promise<HttpDriverResponse<T>> {
     const response = await fetch(url, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
@@ -70,36 +68,5 @@ class HttpClient {
       status: response.status,
       data: (await response.json()) as T,
     };
-  }
-}
-
-export class ApiClient extends HttpClient {
-  public async signIn(
-    signInDto: SignInDto,
-    { storeAccessToken }: { storeAccessToken: boolean },
-  ): Promise<HttpClientResponse<SignedInDto>> {
-    const response = await this.post<SignedInDto>('sign-in', { body: signInDto });
-
-    if (storeAccessToken) {
-      this.setAccessToken(response.data.accessToken);
-    }
-
-    return response;
-  }
-
-  public signUp(signUpDto: SignUpDto): Promise<HttpClientResponse<UserDto>> {
-    return this.post<UserDto>('sign-up', { body: signUpDto });
-  }
-
-  public updateUser(id: string, updateUserDto: UpdateUserDto): Promise<HttpClientResponse<UserDto>> {
-    return this.put<UserDto>(`users/${id}`, { body: updateUserDto });
-  }
-
-  public getUsers(): Promise<HttpClientResponse<UserDto[]>> {
-    return this.get<UserDto[]>('users');
-  }
-
-  public getProfile(): Promise<HttpClientResponse<UserDto>> {
-    return this.get<UserDto>('user');
   }
 }

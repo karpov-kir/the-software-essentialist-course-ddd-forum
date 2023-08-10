@@ -1,6 +1,5 @@
-import { User } from '@prisma/client';
-
-import { PasswordUtils } from './utils/PasswordUtils.mjs';
+import { User } from '../src/shared/models/User.mjs';
+import { PasswordUtils } from '../src/utils/PasswordUtils.mjs';
 
 export class UserBuilder {
   public static readonly DEFAULT_FIRST_NAME = 'John';

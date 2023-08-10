@@ -1,6 +1,6 @@
-import { User } from './User.mjs';
+import { SignInDto, SignUpDto } from '../src/shared/dto/UserDto.mjs';
+import { User } from '../src/shared/models/User.mjs';
 import { UserBuilder } from './UserBuilder.mjs';
-import { SignInDto, SignUpDto } from './UserDto.mjs';
 
 export class UserObjectMother {
   public static defaultUser(): User {
