@@ -44,7 +44,8 @@ export class HttpDriver {
     };
   }
 
-  protected async post<T>(url: string, { body }: { body?: object } = {}): Promise<HttpDriverResponse<T>> {
+  protected async post<T>(path: string, { body }: { body?: object } = {}): Promise<HttpDriverResponse<T>> {
+    const url = new URL(`${this.baseUrl}/${path}`);
     const response = await fetch(url, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
@@ -57,7 +58,8 @@ export class HttpDriver {
     };
   }
 
-  protected async put<T>(url: string, { body }: { body?: object } = {}): Promise<HttpDriverResponse<T>> {
+  protected async put<T>(path: string, { body }: { body?: object } = {}): Promise<HttpDriverResponse<T>> {
+    const url = new URL(`${this.baseUrl}/${path}`);
     const response = await fetch(url, {
       method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,

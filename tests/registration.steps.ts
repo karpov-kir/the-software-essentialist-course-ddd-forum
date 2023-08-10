@@ -1,17 +1,18 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
-import { WebServer } from '../src/infra/WebServer.mjs';
+import { CompositionRoot } from '../src/CompositionRoot.mjs';
 import { UserDto } from '../src/shared/dto/UserDto.mjs';
 import { ApiClient } from '../src/shared/http/ApiClient.mjs';
 import { HttpDriverResponse } from '../src/shared/http/HttpDriver.mjs';
 import { toUserDto, User } from '../src/shared/models/User.mjs';
+import { FakeEmailService } from './FakeEmailService.mjs';
 import { UserObjectMother } from './UserObjectMother.mjs';
 
 const feature = loadFeature(path.resolve(__dirname, './registration.feature'));
 
 const fakeEmailService = new FakeEmailService();
-const webServer = new WebServer();
+const webServer = new CompositionRoot({ emailService: fakeEmailService }).getWebServer();
 const apiClient = new ApiClient('http://localhost:3000');
 
 defineFeature(feature, (test) => {
@@ -49,7 +50,7 @@ defineFeature(feature, (test) => {
     });
 
     and('I should receive an email with login instructions', () => {
-      expect(fakeEmailService.send).toBeCalled();
+      expect(fakeEmailService.sendEmail).toBeCalledWith(newUser.email, expect.any(String));
     });
   });
 });

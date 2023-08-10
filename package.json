@@ -1,7 +1,7 @@
 {
   "name": "the-software-essentialist-course-ddd-forum-best-practices-first",
   "version": "1.0.0",
-  "main": "./main/index.ts",
+  "main": "./src/index.ts",
   "type": "module",
   "engines": {
     "node": ">=20.0.0",
@@ -15,7 +15,9 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "migrate": "prisma migrate deploy --schema=./src/infra/prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema=./src/infra/prisma/schema.prisma"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
