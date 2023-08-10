@@ -20,7 +20,6 @@ interface Dependencies {
 export class CompositionRoot {
   private readonly userRepository: UserRepositoryPort;
   private readonly emailService: EmailServicePort;
-
   private readonly webServer: WebServer;
 
   constructor({

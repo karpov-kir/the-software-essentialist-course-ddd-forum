@@ -101,6 +101,7 @@ export class WebServer {
         controller: usersController,
       },
     );
+    this.registerRoutes();
   }
 
   public isListening() {
@@ -144,7 +145,6 @@ export class WebServer {
   }
 
   public async start() {
-    this.registerRoutes();
     const address = await this.fastify.listen({ port: 3000 });
     this.#isListening = true;
     console.log(`Server is listening on ${address}`);
