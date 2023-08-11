@@ -1,4 +1,5 @@
 import { SignedInDto, SignInDto } from '../shared/dto/UserDto.mjs';
+import { UnprocessableInputError } from '../shared/errors/UnprocessableInputError.mjs';
 import { UserRepositoryPort } from '../shared/repositories/UserRepositoryPort.mjs';
 import { AccessTokenUtils } from '../utils/AccessTokenUtils.mjs';
 import { PasswordUtils } from '../utils/PasswordUtils.mjs';
@@ -11,7 +12,7 @@ export class SignInUseCase implements UseCase<SignInDto, SignedInDto> {
     const user = await this.userRepository.getUserByEmail(signInDto.email);
 
     if (!user) {
-      throw new Error('Invalid email address or password');
+      throw new UnprocessableInputError('Invalid email address or password');
     }
 
     if (
@@ -20,7 +21,7 @@ export class SignInUseCase implements UseCase<SignInDto, SignedInDto> {
         hashedPassword: user.password,
       }))
     ) {
-      throw new Error('Invalid email address or password');
+      throw new UnprocessableInputError('Invalid email address or password');
     }
 
     return {

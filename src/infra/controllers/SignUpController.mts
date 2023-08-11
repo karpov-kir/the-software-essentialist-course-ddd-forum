@@ -1,30 +1,21 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyRequest } from 'fastify';
+import z from 'zod';
 
 import { Controller } from '../../infra/controllers/Controller.mjs';
-import { SignUpDto } from '../../shared/dto/UserDto.mjs';
+import { Validation } from '../../shared/Validation.mjs';
 import { SignUpUseCase } from '../../useCases/SignUpUseCase.mjs';
+
+const signUpDtoSchema = z.object({
+  email: z.string().email(),
+  firstName: Validation.FirstNameSchema,
+  lastName: Validation.LastNameSchema,
+  password: Validation.PasswordSchema,
+});
 
 export class SignUpController implements Controller {
   constructor(private readonly signUpUseCase: SignUpUseCase) {}
 
-  async handle(
-    request: FastifyRequest<{
-      Body: SignUpDto;
-    }>,
-    reply: FastifyReply,
-  ) {
-    const { firstName, lastName, email, password } = request.body;
-
-    // Validate request body
-    if (!firstName || !lastName || !email || !password) {
-      reply.status(400);
-      return { message: 'First name, last name, email, and password are required' };
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw new Error('Invalid email address');
-    }
-
-    return this.signUpUseCase.execute(request.body);
+  async handle(request: FastifyRequest) {
+    return this.signUpUseCase.execute(signUpDtoSchema.parse(request.body));
   }
 }

@@ -1,4 +1,4 @@
-import { CompositionRoot } from '../CompositionRoot.mjs';
+import { CompositionRoot } from '../../CompositionRoot.mjs';
 import { WebServer } from './WebServer.mjs';
 
 let webServer: WebServer;

@@ -1,5 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
+import { NotFoundError } from '../errors/NotFoundError.mjs';
+import { UnprocessableInputError } from '../errors/UnprocessableInputError.mjs';
 import { User } from '../models/User.mjs';
 import { UserRepositoryPort } from './UserRepositoryPort.mjs';
 
@@ -16,7 +18,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       const meta = prismaError.meta as { target?: string | string[] };
 
       if (prismaError.code === 'P2002' && meta?.target?.includes('email')) {
-        throw new Error('Email address already exists');
+        throw new UnprocessableInputError('Email address already exists');
       }
 
       throw error;
@@ -24,11 +26,6 @@ export class PrismaUserRepository implements UserRepositoryPort {
   }
 
   public async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<User> {
-    // Validate email
-    if (user.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email as string)) {
-      throw new Error('Invalid email address');
-    }
-
     try {
       return await this.prisma.user.update({
         where: { id },
@@ -39,7 +36,7 @@ export class PrismaUserRepository implements UserRepositoryPort {
       const meta = prismaError.meta as { target?: string | string[] };
 
       if (prismaError.code === 'P2002' && meta?.target?.includes('email')) {
-        throw new Error('Email address already exists');
+        throw new UnprocessableInputError('Email address already exists');
       }
 
       throw error;
@@ -50,9 +47,15 @@ export class PrismaUserRepository implements UserRepositoryPort {
     return this.prisma.user.findMany();
   }
 
-  public getUserByEmail(email: string): Promise<User> {
-    return this.prisma.user.findFirstOrThrow({
+  public async getUserByEmail(email: string): Promise<User> {
+    const user = await this.prisma.user.findFirst({
       where: { email },
     });
+
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    return user;
   }
 }

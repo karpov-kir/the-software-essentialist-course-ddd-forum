@@ -1,26 +1,19 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyRequest } from 'fastify';
+import z from 'zod';
 
 import { Controller } from '../../infra/controllers/Controller.mjs';
-import { SignInDto } from '../../shared/dto/UserDto.mjs';
+import { Validation } from '../../shared/Validation.mjs';
 import { SignInUseCase } from '../../useCases/SignInUseCase.mjs';
+
+const signInDtoSchema = z.object({
+  email: z.string().email(),
+  password: Validation.PasswordSchema,
+});
 
 export class SignInController implements Controller {
   constructor(private readonly signInUseCase: SignInUseCase) {}
 
-  async handle(
-    request: FastifyRequest<{
-      Body: SignInDto;
-    }>,
-    reply: FastifyReply,
-  ) {
-    const { email, password } = request.body;
-
-    // Validate request body
-    if (!email || !password) {
-      reply.status(400);
-      return { message: 'Email and password are required' };
-    }
-
-    return this.signInUseCase.execute(request.body);
+  async handle(request: FastifyRequest) {
+    return this.signInUseCase.execute(signInDtoSchema.parse(request.body));
   }
 }

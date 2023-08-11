@@ -1,8 +1,7 @@
-import { EmailServicePort } from 'src/shared/services/EmailServicePort.mjs';
-
 import { SignUpDto, UserDto } from '../shared/dto/UserDto.mjs';
 import { toUserDto } from '../shared/models/User.mjs';
 import { UserRepositoryPort } from '../shared/repositories/UserRepositoryPort.mjs';
+import { EmailServicePort } from '../shared/services/EmailServicePort.mjs';
 import { PasswordUtils } from '../utils/PasswordUtils.mjs';
 import { UseCase } from './UseCase.mjs';
 

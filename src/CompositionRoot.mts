@@ -4,7 +4,7 @@ import { SignInController } from './infra/controllers/SignInController.mjs';
 import { SignUpController } from './infra/controllers/SignUpController.mjs';
 import { UpdateUserController } from './infra/controllers/UpdateUserController.mjs';
 import { UsersController } from './infra/controllers/UsersController.mjs';
-import { WebServer } from './infra/WebServer.mjs';
+import { WebServer } from './infra/webServer/WebServer.mjs';
 import { PrismaUserRepository } from './shared/repositories/PrismaUserRepository.mjs';
 import { UserRepositoryPort } from './shared/repositories/UserRepositoryPort.mjs';
 import { EmailServicePort } from './shared/services/EmailServicePort.mjs';
