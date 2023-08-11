@@ -4,12 +4,6 @@ import { authenticationMiddleware } from './authenticationMiddleware.mjs';
 import { errorHandler } from './errorHandler.mjs';
 import { Controllers, createRoutes, Route } from './routes.mjs';
 
-declare module 'fastify' {
-  interface FastifyRequest {
-    currentUserEmail: string;
-  }
-}
-
 export class WebServer {
   #isListening = false;
 
@@ -36,6 +30,7 @@ export class WebServer {
     const publicRoutes = routes.filter((route) => !route.isProtected);
 
     this.fastify.register(async function authenticatedContext(childServer) {
+      childServer.decorateRequest('currentUserId', 0);
       childServer.decorateRequest('currentUserEmail', '');
       childServer.addHook('preHandler', authenticationMiddleware);
 

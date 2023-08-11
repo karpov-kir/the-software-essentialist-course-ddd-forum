@@ -2,6 +2,7 @@ import { FastifyRequest } from 'fastify';
 import z from 'zod';
 
 import { Controller } from '../../infra/controllers/Controller.mjs';
+import { PermissionsDeniedError } from '../../shared/errors/PermissionsDeniedError.mjs';
 import { toUserDto } from '../../shared/models/User.mjs';
 import { UserRepositoryPort } from '../../shared/repositories/UserRepositoryPort.mjs';
 import { Validation } from '../../shared/Validation.mjs';
@@ -19,7 +20,10 @@ export class UpdateUserController implements Controller {
   async handle(request: FastifyRequest<{ Params: { id: number } }>) {
     const { id } = request.params;
 
-    // TODO validate that it's current user
+    if (id !== request.currentUserId) {
+      throw new PermissionsDeniedError();
+    }
+
     return toUserDto(await this.userRepository.updateUser(id, updateUserDtoSchema.parse(request.body)));
   }
 }

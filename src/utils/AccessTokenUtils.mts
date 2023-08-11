@@ -1,22 +1,37 @@
 import jwt from 'jsonwebtoken';
+import z from 'zod';
 
 import { AccessTokenPayloadDto } from '../shared/dto/UserDto.mjs';
+import { User } from '../shared/models/User.mjs';
 
 const SECRET = 'shhhhh';
 
+const accessTokenPayloadSchema = z.object({
+  id: z.number(),
+  email: z.string().email(),
+});
+
 export class AccessTokenUtils {
   public static createAccessToken(
-    accessTokenPayloadDto: AccessTokenPayloadDto,
+    user: User,
     { expiresIn = '6h' }: { expiresIn?: number | string } = {},
   ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      return jwt.sign(accessTokenPayloadDto, SECRET, { expiresIn }, (error, encoded) => {
-        if (error) {
-          return reject(error);
-        }
+      return jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+        },
+        SECRET,
+        { expiresIn },
+        (error, encoded) => {
+          if (error) {
+            return reject(error);
+          }
 
-        return resolve(encoded!);
-      });
+          return resolve(encoded!);
+        },
+      );
     });
   }
 
@@ -27,13 +42,11 @@ export class AccessTokenUtils {
           return reject(error);
         }
 
-        if (!decoded || typeof decoded !== 'object' || !decoded.email) {
-          return reject(new Error('Invalid access token'));
+        try {
+          resolve(accessTokenPayloadSchema.parse(decoded));
+        } catch (error) {
+          reject(error);
         }
-
-        resolve({
-          email: decoded.email,
-        });
       });
     });
   }

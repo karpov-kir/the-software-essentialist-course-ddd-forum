@@ -26,7 +26,7 @@ export class SignInUseCase implements UseCase<SignInDto, SignedInDto> {
 
     return {
       user,
-      accessToken: await AccessTokenUtils.createAccessToken({ email: user.email }),
+      accessToken: await AccessTokenUtils.createAccessToken(user),
     };
   }
 }

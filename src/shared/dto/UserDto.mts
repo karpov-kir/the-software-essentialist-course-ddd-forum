@@ -39,5 +39,6 @@ export interface UpdateUserDto {
 }
 
 export interface AccessTokenPayloadDto {
+  id: number;
   email: string;
 }

@@ -18,7 +18,8 @@ export const authenticationMiddleware: preHandlerAsyncHookHandler = async (reque
   }
 
   try {
-    const { email } = await AccessTokenUtils.verifyAndDecodeAccessToken(accessToken);
+    const { id, email } = await AccessTokenUtils.verifyAndDecodeAccessToken(accessToken);
+    request.currentUserId = id;
     request.currentUserEmail = email;
   } catch (error) {
     throw new UnauthorizedError(`Invalid access token`);
