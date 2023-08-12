@@ -11,7 +11,7 @@ All routes can be found in [routes.mts](./src/infra/webServer/routes.mts).
 - Docker compose
 - Node.js >= 20.0.0
 - NPM >= 8.0.0
-- `npm ci`
+- Don't forget to run `npm ci`
 
 ### Build
 
