@@ -1,6 +1,6 @@
 import { Database } from './infra/Database.mjs';
 import { WebServer } from './infra/webServer/WebServer.mjs';
-import { LifeCheckController } from './modules/user/controllers/LifeCheckController.mjs';
+import { LifeCheckController } from './infra/LifeCheckController.mjs';
 import { ProfileController } from './modules/user/controllers/ProfileController.mjs';
 import { SignInController } from './modules/user/controllers/SignInController.mjs';
 import { SignUpController } from './modules/user/controllers/SignUpController.mjs';

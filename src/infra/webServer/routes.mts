@@ -1,4 +1,4 @@
-import { LifeCheckController } from '../../modules/user/controllers/LifeCheckController.mjs';
+import { LifeCheckController } from '../LifeCheckController.mjs';
 import { ProfileController } from '../../modules/user/controllers/ProfileController.mjs';
 import { SignInController } from '../../modules/user/controllers/SignInController.mjs';
 import { SignUpController } from '../../modules/user/controllers/SignUpController.mjs';
