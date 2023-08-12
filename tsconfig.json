@@ -15,8 +15,8 @@
     "**/*.spec.ts",
     "**/*.ispec.ts",
     "**/*.steps.ts",
-    "**/*.e2e.ts",
-    "**/jest.config.ts",
+    "**/*.e2espec.ts",
+    "**/jest.config.*",
     "./tests"
   ]
 }
