@@ -1,17 +1,17 @@
-import { Database } from './Database.mjs';
-import { LifeCheckController } from './infra/controllers/LifeCheckController.mjs';
-import { ProfileController } from './infra/controllers/ProfileController.mjs';
-import { SignInController } from './infra/controllers/SignInController.mjs';
-import { SignUpController } from './infra/controllers/SignUpController.mjs';
-import { UpdateUserController } from './infra/controllers/UpdateUserController.mjs';
-import { UsersController } from './infra/controllers/UsersController.mjs';
+import { Database } from './infra/Database.mjs';
 import { WebServer } from './infra/webServer/WebServer.mjs';
-import { PrismaUserRepository } from './shared/repositories/PrismaUserRepository.mjs';
-import { UserRepositoryPort } from './shared/repositories/UserRepositoryPort.mjs';
+import { LifeCheckController } from './modules/user/controllers/LifeCheckController.mjs';
+import { ProfileController } from './modules/user/controllers/ProfileController.mjs';
+import { SignInController } from './modules/user/controllers/SignInController.mjs';
+import { SignUpController } from './modules/user/controllers/SignUpController.mjs';
+import { UpdateUserController } from './modules/user/controllers/UpdateUserController.mjs';
+import { UsersController } from './modules/user/controllers/UsersController.mjs';
+import { PrismaUserRepository } from './modules/user/repositories/PrismaUserRepository.mjs';
+import { UserRepositoryPort } from './modules/user/repositories/UserRepositoryPort.mjs';
+import { SignInUseCase } from './modules/user/useCases/SignInUseCase.mjs';
+import { SignUpUseCase } from './modules/user/useCases/SignUpUseCase.mjs';
 import { EmailServicePort } from './shared/services/EmailServicePort.mjs';
 import { JustLogEmailService } from './shared/services/JustLogEmailService.mjs';
-import { SignInUseCase } from './useCases/SignInUseCase.mjs';
-import { SignUpUseCase } from './useCases/SignUpUseCase.mjs';
 
 interface Dependencies {
   userRepository: UserRepositoryPort;

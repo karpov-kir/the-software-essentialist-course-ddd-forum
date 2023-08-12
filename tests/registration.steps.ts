@@ -2,10 +2,10 @@ import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 
 import { CompositionRoot } from '../src/CompositionRoot.mjs';
-import { UserDto } from '../src/shared/dto/UserDto.mjs';
+import { UserDto } from '../src/modules/user/dto/UserDto.mjs';
+import { toUserDto, User } from '../src/modules/user/models/User.mjs';
 import { ApiClient } from '../src/shared/http/ApiClient.mjs';
 import { HttpDriverResponse } from '../src/shared/http/HttpDriver.mjs';
-import { toUserDto, User } from '../src/shared/models/User.mjs';
 import { FakeEmailService } from './fakes/FakeEmailService.mjs';
 import { UserObjectMother } from './utils/UserObjectMother.mjs';
 

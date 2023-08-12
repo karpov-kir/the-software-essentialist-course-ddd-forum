@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 
-import { AccessTokenPayloadDto } from '../shared/dto/UserDto.mjs';
-import { User } from '../shared/models/User.mjs';
+import { AccessTokenPayloadDto } from '../modules/user/dto/UserDto.mjs';
+import { User } from '../modules/user/models/User.mjs';
 
 const SECRET = 'shhhhh';
 

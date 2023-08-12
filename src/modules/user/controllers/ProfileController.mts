@@ -1,8 +1,8 @@
 import { FastifyRequest } from 'fastify';
 
-import { Controller } from '../../infra/controllers/Controller.mjs';
-import { toUserDto } from '../../shared/models/User.mjs';
-import { UserRepositoryPort } from '../../shared/repositories/UserRepositoryPort.mjs';
+import { Controller } from '../../../infra/Controller.mjs';
+import { toUserDto } from '../models/User.mjs';
+import { UserRepositoryPort } from '../repositories/UserRepositoryPort.mjs';
 
 export class ProfileController implements Controller {
   constructor(private readonly userRepository: UserRepositoryPort) {}

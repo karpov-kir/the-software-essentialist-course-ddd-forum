@@ -1,4 +1,4 @@
-import { SignedInDto, SignInDto, SignUpDto, UpdateUserDto, UserDto } from '../dto/UserDto.mjs';
+import { SignedInDto, SignInDto, SignUpDto, UpdateUserDto, UserDto } from '../../modules/user/dto/UserDto.mjs';
 import { HttpDriver, HttpDriverResponse } from './HttpDriver.mjs';
 
 export class ApiClient extends HttpDriver {

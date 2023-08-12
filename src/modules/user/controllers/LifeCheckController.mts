@@ -1,4 +1,4 @@
-import { Controller } from './Controller.mjs';
+import { Controller } from '../../../infra/Controller.mjs';
 
 export class LifeCheckController implements Controller {
   async handle() {

@@ -1,8 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
+import { NotFoundError } from '../../../shared/errors/NotFoundError.mjs';
+import { UnprocessableInputError } from '../../../shared/errors/UnprocessableInputError.mjs';
 import { CreateUserDto, UpdateUserDto } from '../dto/UserDto.mjs';
-import { NotFoundError } from '../errors/NotFoundError.mjs';
-import { UnprocessableInputError } from '../errors/UnprocessableInputError.mjs';
 import { User } from '../models/User.mjs';
 import { UserRepositoryPort } from './UserRepositoryPort.mjs';
 

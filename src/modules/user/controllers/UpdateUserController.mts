@@ -1,11 +1,11 @@
 import { FastifyRequest } from 'fastify';
 import z from 'zod';
 
-import { Controller } from '../../infra/controllers/Controller.mjs';
-import { PermissionsDeniedError } from '../../shared/errors/PermissionsDeniedError.mjs';
-import { toUserDto } from '../../shared/models/User.mjs';
-import { UserRepositoryPort } from '../../shared/repositories/UserRepositoryPort.mjs';
-import { Validation } from '../../shared/Validation.mjs';
+import { Controller } from '../../../infra/Controller.mjs';
+import { PermissionsDeniedError } from '../../../shared/errors/PermissionsDeniedError.mjs';
+import { Validation } from '../../../shared/Validation.mjs';
+import { toUserDto } from '../models/User.mjs';
+import { UserRepositoryPort } from '../repositories/UserRepositoryPort.mjs';
 
 const updateUserDtoSchema = z.object({
   email: z.string().email(),
