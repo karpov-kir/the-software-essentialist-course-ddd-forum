@@ -9,6 +9,7 @@ All routes can be found in [routes.mts](./src/infra/webServer/routes.mts).
 ### Prerequisites
 
 - Docker compose
+  - Make sure Docker program / daemon is running
 - Node.js >= 20.0.0
 - NPM >= 8.0.0
 - Don't forget to run `npm ci`
