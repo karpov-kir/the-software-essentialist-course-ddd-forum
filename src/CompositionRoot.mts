@@ -1,3 +1,4 @@
+import { Database } from './Database.mjs';
 import { LifeCheckController } from './infra/controllers/LifeCheckController.mjs';
 import { ProfileController } from './infra/controllers/ProfileController.mjs';
 import { SignInController } from './infra/controllers/SignInController.mjs';
@@ -21,6 +22,7 @@ export class CompositionRoot {
   private readonly userRepository: UserRepositoryPort;
   private readonly emailService: EmailServicePort;
   private readonly webServer: WebServer;
+  private readonly database = new Database();
 
   constructor({
     userRepository = new PrismaUserRepository(),
@@ -46,5 +48,9 @@ export class CompositionRoot {
 
   public getWebServer() {
     return this.webServer;
+  }
+
+  public getDatabase() {
+    return this.database;
   }
 }

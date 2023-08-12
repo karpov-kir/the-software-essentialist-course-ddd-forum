@@ -3,7 +3,7 @@ import { WebServer } from './WebServer.mjs';
 
 let webServer: WebServer;
 
-describe(WebServer, () => {
+describe(WebServer.name, () => {
   beforeEach(() => {
     webServer = new CompositionRoot().getWebServer();
   });

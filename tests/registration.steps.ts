@@ -6,13 +6,14 @@ import { UserDto } from '../src/shared/dto/UserDto.mjs';
 import { ApiClient } from '../src/shared/http/ApiClient.mjs';
 import { HttpDriverResponse } from '../src/shared/http/HttpDriver.mjs';
 import { toUserDto, User } from '../src/shared/models/User.mjs';
-import { FakeEmailService } from './FakeEmailService.mjs';
-import { UserObjectMother } from './UserObjectMother.mjs';
+import { FakeEmailService } from './fakes/FakeEmailService.mjs';
+import { UserObjectMother } from './utils/UserObjectMother.mjs';
 
 const feature = loadFeature(path.resolve(__dirname, './registration.feature'));
 
 const fakeEmailService = new FakeEmailService();
-const webServer = new CompositionRoot({ emailService: fakeEmailService }).getWebServer();
+const compositionRoot = new CompositionRoot({ emailService: fakeEmailService });
+const webServer = compositionRoot.getWebServer();
 const apiClient = new ApiClient('http://localhost:3000');
 
 defineFeature(feature, (test) => {
@@ -44,9 +45,13 @@ defineFeature(feature, (test) => {
       const profileResponse = await apiClient.getProfile();
 
       expect(signUpResponse.status).toBe(200);
-      expect(signUpResponse.data).toBe(toUserDto(newUser));
+      expect(signUpResponse.data).toEqual(
+        toUserDto({ ...newUser, createdAt: profileResponse.data.createdAt, updatedAt: profileResponse.data.updatedAt }),
+      );
       expect(profileResponse.status).toBe(200);
-      expect(profileResponse.data).toEqual(toUserDto(newUser));
+      expect(profileResponse.data).toEqual(
+        toUserDto({ ...newUser, createdAt: profileResponse.data.createdAt, updatedAt: profileResponse.data.updatedAt }),
+      );
     });
 
     and('I should receive an email with login instructions', () => {

@@ -15,7 +15,9 @@ export class HttpDriver {
   constructor(protected readonly baseUrl: string) {}
 
   private createHeaders() {
-    const headers: RequestInit['headers'] = {};
+    const headers: RequestInit['headers'] = {
+      'Content-Type': 'application/json',
+    };
 
     if (this.accessToken) {
       headers['Authorization'] = `Bearer ${this.accessToken}`;

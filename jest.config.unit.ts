@@ -3,7 +3,7 @@ import type { JestConfigWithTsJest } from 'ts-jest';
 // https://kulshekhar.github.io/ts-jest/docs/guides/esm-support/
 export default async (): Promise<JestConfigWithTsJest> => ({
   verbose: true,
-  testMatch: ['**/*.@(spec|ispec|steps|e2e).*'],
+  testMatch: ['**/*.@(spec).*'],
   resolver: '<rootDir>/jest.mjsResolver.cjs',
   extensionsToTreatAsEsm: ['.mts'],
   transform: {

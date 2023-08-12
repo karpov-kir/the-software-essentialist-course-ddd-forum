@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 
+import { CreateUserDto, UpdateUserDto } from '../dto/UserDto.mjs';
 import { NotFoundError } from '../errors/NotFoundError.mjs';
 import { UnprocessableInputError } from '../errors/UnprocessableInputError.mjs';
 import { User } from '../models/User.mjs';
@@ -8,10 +9,10 @@ import { UserRepositoryPort } from './UserRepositoryPort.mjs';
 export class PrismaUserRepository implements UserRepositoryPort {
   private readonly prisma = new PrismaClient();
 
-  public async createUser(user: User): Promise<User> {
+  public async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
       return await this.prisma.user.create({
-        data: user,
+        data: createUserDto,
       });
     } catch (error) {
       const prismaError = error as Prisma.PrismaClientKnownRequestError;
@@ -25,11 +26,14 @@ export class PrismaUserRepository implements UserRepositoryPort {
     }
   }
 
-  public async updateUser(id: number, user: Prisma.UserUpdateInput): Promise<User> {
+  public async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     try {
       return await this.prisma.user.update({
         where: { id },
-        data: user,
+        data: {
+          ...updateUserDto,
+          updatedAt: new Date(),
+        },
       });
     } catch (error) {
       const prismaError = error as Prisma.PrismaClientKnownRequestError;

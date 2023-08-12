@@ -20,7 +20,11 @@ export class ValidationError extends Error {
       });
     });
 
-    return new ValidationError(details, message);
+    const validationError = new ValidationError(details, message);
+
+    validationError.stack = error.stack;
+
+    return validationError;
   }
 
   constructor(details: ErrorDetails[], message = 'Validation error') {

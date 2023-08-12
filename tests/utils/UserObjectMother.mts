@@ -1,5 +1,5 @@
-import { SignInDto, SignUpDto } from '../src/shared/dto/UserDto.mjs';
-import { User } from '../src/shared/models/User.mjs';
+import { SignInDto, SignUpDto } from '../../src/shared/dto/UserDto.mjs';
+import { User } from '../../src/shared/models/User.mjs';
 import { UserBuilder } from './UserBuilder.mjs';
 
 export class UserObjectMother {

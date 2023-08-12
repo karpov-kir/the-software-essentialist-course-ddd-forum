@@ -38,12 +38,13 @@ export function errorHandler(
     error = ValidationError.fromZodError(rawError);
   }
 
+  this.log.error(error);
+
   const statusCode = errorToStatusCode.get(error.constructor) ?? 500;
 
   reply.status(statusCode);
 
   if (statusCode === 500) {
-    this.log.error(error);
     reply.send(new Error('Internal server error'));
     return;
   }

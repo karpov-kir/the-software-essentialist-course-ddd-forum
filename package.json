@@ -9,15 +9,28 @@
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
-    "start:dev": "nodemon",
+    "prisma:generate": "prisma generate --schema=./src/infra/prisma/schema.prisma",
+    "migrate": "prisma db push --schema=./src/infra/prisma/schema.prisma",
+    "start:docker:db": "docker-compose up --build -d",
+    "start:dev": "npm run start:docker:db && cross-env NODE_ENV=development npm run prisma:generate && npx dotenv-cli -e .env.development npm run migrate && cross-env NODE_ENV=development nodemon",
     "start": "npm run build && node dist/index.mjs",
     "lint": "eslint \"src/**/*.@(ts|mts)\"",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest",
-    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "test:watch": "jest --watch",
-    "migrate": "prisma migrate deploy --schema=./src/infra/prisma/schema.prisma",
-    "prisma:generate": "prisma generate --schema=./src/infra/prisma/schema.prisma"
+    "test:unit": "cross-env NODE_ENV=development jest -c jest.config.unit.ts",
+    "test:unit:dev": "cross-env NODE_ENV=development jest -c jest.config.unit.ts --watchAll",
+    "test:infra": "cross-env NODE_ENV=development jest -c jest.config.infra.ts",
+    "test:infra:dev": "cross-env NODE_ENV=development jest -c jest.config.infra.ts --watchAll",
+    "test:e2e": "cross-env NODE_ENV=development jest -c jest.config.e2e.ts",
+    "test:e2e:dev": "cross-env NODE_ENV=development jest -c jest.config.e2e.ts --watchAll"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.1.1",
+    "bcrypt": "^5.1.0",
+    "fastify": "^4.21.0",
+    "jsonwebtoken": "^9.0.1",
+    "query-string": "^8.1.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -27,6 +40,8 @@
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.2.1",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -41,13 +56,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6",
     "undici": "^5.23.0"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.1.1",
-    "bcrypt": "^5.1.0",
-    "fastify": "^4.21.0",
-    "jsonwebtoken": "^9.0.1",
-    "query-string": "^8.1.0",
-    "zod": "^3.21.4"
   }
 }

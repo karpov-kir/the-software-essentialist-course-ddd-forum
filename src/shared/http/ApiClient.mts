@@ -28,6 +28,6 @@ export class ApiClient extends HttpDriver {
   }
 
   public getProfile(): Promise<HttpDriverResponse<UserDto>> {
-    return this.get<UserDto>('user');
+    return this.get<UserDto>('profile');
   }
 }
