@@ -1,4 +1,4 @@
-import { User } from '../../src/shared/models/User.mjs';
+import { User } from '../../src/modules/user/models/User.mjs';
 import { PasswordUtils } from '../../src/utils/PasswordUtils.mjs';
 
 export class UserBuilder {
