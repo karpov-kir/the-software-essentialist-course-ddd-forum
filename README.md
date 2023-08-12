@@ -1,6 +1,6 @@
-# DDD forum best practices first
+# The software essentialist course DDD forum
 
-This is my attempt to implement "Action: E2E Acceptance & Integration Testing on the Backend" assignment - https://www.essentialist.dev/products/the-software-essentialist/categories/2153382759/posts/2168948141. I used some code from the previous assignment https://github.com/karpov-kir/the-software-essentialist-cource/pull/8.
+This is my attempt to implement "Action: E2E Acceptance & Integration Testing on the Backend" assignment - https://www.essentialist.dev/products/the-software-essentialist/categories/2153382759/posts/2168948141. I used some code from the previous assignment https://github.com/karpov-kir/the-software-essentialist-course/pull/8.
 
 All routes can be found in [routes.mts](./src/infra/webServer/routes.mts).
 
