@@ -29,7 +29,7 @@ All routes can be found in [routes.mts](./src/infra/webServer/routes.mts).
 - `npm run test:infra` or `npm run test:infra:dev` to run in watch mode
 - `npm run test:e2e` or `npm run test:e2e:dev` to run in watch mode
 
-## What's used
+## What's used (main notes in my opinion)
 
 Tech stack:
 
