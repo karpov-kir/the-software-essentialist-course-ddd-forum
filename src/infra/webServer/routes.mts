@@ -1,10 +1,10 @@
-import { LifeCheckController } from '../LifeCheckController.mjs';
 import { ProfileController } from '../../modules/user/controllers/ProfileController.mjs';
 import { SignInController } from '../../modules/user/controllers/SignInController.mjs';
 import { SignUpController } from '../../modules/user/controllers/SignUpController.mjs';
 import { UpdateUserController } from '../../modules/user/controllers/UpdateUserController.mjs';
 import { UsersController } from '../../modules/user/controllers/UsersController.mjs';
 import { Controller } from '../Controller.mjs';
+import { LifeCheckController } from '../LifeCheckController.mjs';
 
 export interface Route {
   path: string;
