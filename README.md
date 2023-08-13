@@ -43,7 +43,7 @@ Tech stack:
 
 Architecture:
 
-- Use cases from Clean architecture (to make controllers thin and stupid and for better testability)
+- Use cases from Clean architecture (to make controllers thin, stupid, and for better testability)
   - Some controllers still don't use Use cases because they are too simple e.g. [UsersController.mts](./src/modules/user/controllers/UsersController.mts)
 - Ports and adapters from Clean architecture
 - Horizontal decoupling
