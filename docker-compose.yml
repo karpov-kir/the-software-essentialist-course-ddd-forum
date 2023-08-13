@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - 6543:5432
+    env_file:
+      - .env.development
