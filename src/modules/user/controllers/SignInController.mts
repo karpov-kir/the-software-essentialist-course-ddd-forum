@@ -2,8 +2,8 @@ import { FastifyRequest } from 'fastify';
 import z from 'zod';
 
 import { Controller } from '../../../infra/Controller.mjs';
-import { Validation } from '../../../shared/Validation.mjs';
 import { SignInUseCase } from '../useCases/SignInUseCase.mjs';
+import { Validation } from '../Validation.mjs';
 
 const signInDtoSchema = z.object({
   email: z.string().email(),

@@ -3,9 +3,9 @@ import z from 'zod';
 
 import { Controller } from '../../../infra/Controller.mjs';
 import { PermissionsDeniedError } from '../../../shared/errors/PermissionsDeniedError.mjs';
-import { Validation } from '../../../shared/Validation.mjs';
 import { toUserDto } from '../models/User.mjs';
 import { UserRepositoryPort } from '../repositories/UserRepositoryPort.mjs';
+import { Validation } from '../Validation.mjs';
 
 const updateUserDtoSchema = z.object({
   email: z.string().email(),
