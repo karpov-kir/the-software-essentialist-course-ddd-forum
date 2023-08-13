@@ -39,7 +39,7 @@ Tech stack:
 - PostgreSQL
 - Fastify
 - JWT for stateless authentication
-- Docker compose
+- Docker compose to create development environment close to production
 
 Architecture:
 
