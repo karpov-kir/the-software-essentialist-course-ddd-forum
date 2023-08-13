@@ -38,14 +38,14 @@ Tech stack:
   - The generated code is hard to debug
 - PostgreSQL
 - Fastify
-- JWT
+- JWT for stateless authentication
 - Docker compose
 
 Architecture:
 
-- Use cases from Clean architecture (to make controllers thin, stupid, and for better testability)
+- Use cases from Clean architecture (to make controllers thin, stupid, and to isolate business logic from infra)
   - Some controllers still don't use Use cases because they are too simple e.g. [UsersController.mts](./src/modules/user/controllers/UsersController.mts)
-- Ports and adapters from Clean architecture
+- Ports and Adapters from Clean architecture
 - Horizontal decoupling
 - Vertical slicing
 
