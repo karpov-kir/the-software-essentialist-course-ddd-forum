@@ -1,7 +1,7 @@
 import { preHandlerAsyncHookHandler } from 'fastify';
 
+import { AccessTokenUtils } from '../../modules/user/utils/AccessTokenUtils.mjs';
 import { UnauthorizedError } from '../../shared/errors/UnauthorizedError.mjs';
-import { AccessTokenUtils } from '../../utils/AccessTokenUtils.mjs';
 
 export const authenticationMiddleware: preHandlerAsyncHookHandler = async (request) => {
   const { authorization } = request.headers;

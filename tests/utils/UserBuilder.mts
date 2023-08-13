@@ -1,5 +1,5 @@
 import { User } from '../../src/modules/user/models/User.mjs';
-import { PasswordUtils } from '../../src/utils/PasswordUtils.mjs';
+import { PasswordUtils } from '../../src/modules/user/utils/PasswordUtils.mjs';
 
 export class UserBuilder {
   public static readonly DEFAULT_FIRST_NAME = 'John';

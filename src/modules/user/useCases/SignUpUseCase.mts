@@ -1,9 +1,9 @@
 import { EmailServicePort } from '../../../shared/services/EmailServicePort.mjs';
 import { UseCase } from '../../../shared/UseCase.mjs';
-import { PasswordUtils } from '../../../utils/PasswordUtils.mjs';
 import { SignUpDto, UserDto } from '../dto/UserDto.mjs';
 import { toUserDto } from '../models/User.mjs';
 import { UserRepositoryPort } from '../repositories/UserRepositoryPort.mjs';
+import { PasswordUtils } from '../utils/PasswordUtils.mjs';
 
 export class SignUpUseCase implements UseCase<SignUpDto, UserDto> {
   constructor(

@@ -1,9 +1,9 @@
 import { UnprocessableInputError } from '../../../shared/errors/UnprocessableInputError.mjs';
 import { UseCase } from '../../../shared/UseCase.mjs';
-import { AccessTokenUtils } from '../../../utils/AccessTokenUtils.mjs';
-import { PasswordUtils } from '../../../utils/PasswordUtils.mjs';
 import { SignedInDto, SignInDto } from '../dto/UserDto.mjs';
 import { UserRepositoryPort } from '../repositories/UserRepositoryPort.mjs';
+import { AccessTokenUtils } from '../utils/AccessTokenUtils.mjs';
+import { PasswordUtils } from '../utils/PasswordUtils.mjs';
 
 export class SignInUseCase implements UseCase<SignInDto, SignedInDto> {
   constructor(private userRepository: UserRepositoryPort) {}
