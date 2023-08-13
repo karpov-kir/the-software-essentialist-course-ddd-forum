@@ -28,3 +28,29 @@ All routes can be found in [routes.mts](./src/infra/webServer/routes.mts).
 - `npm run test:unit` or `npm run test:unit:dev` to run in watch mode 
 - `npm run test:infra` or `npm run test:infra:dev` to run in watch mode
 - `npm run test:e2e` or `npm run test:e2e:dev` to run in watch mode
+
+## What's used
+
+Tech stack:
+
+- Prisma as ORM, but I didn't like it
+  - I find it inconvenient to generate the client every time I change the schema, run tests, and start the server. I would prefer to use TypeORM or Sequelize instead (or maybe some other ORM).
+  - The generated code is hard to debug
+- PostgreSQL
+- Fastify
+- JWT
+- Docker compose
+
+Architecture:
+
+- Use cases from Clean architecture (to make controllers thin and stupid and for better testability)
+  - Some controllers still don't use Use cases because they are too simple e.g. [UsersController.mts](./src/modules/user/controllers/UsersController.mts)
+- Ports and adapters from Clean architecture
+- Horizontal decoupling
+- Vertical slicing
+
+Patterns:
+
+- [Object mother](https://martinfowler.com/bliki/ObjectMother.html)
+- [Builder pattern](https://refactoring.guru/design-patterns/builder)
+- Composition root
